@@ -2,35 +2,29 @@ import { RabbitDirectEmitter } from "./tools/directEmitter";
 import { IRabbitMessage } from "./tools/common";
 
 /**
- * @api {direct} catalog/article-exist Comprobar Articulo
+ * @api {direct} discount/discount_update Cambio de porcentaje de descuento
  * @apiGroup RabbitMQ POST
  *
- * @apiDescription Cart enviá un mensaje a Catalog para comprobar la validez de un articulo.
+ * @apiDescription Discoutn enviá un mensaje a Order para actualizar el porcentaje de descuento cuando aun no se procesa la misma.
  *
  * @apiExample {json} Mensaje
  *     {
- *        "type": "article-exist",
- *        "queue": "cart",
- *        "exchange": "cart",
- *         "message": {
- *             "referenceId": "{cartId}",
- *             "articleId": "{articleId}"
+ *        "type": "change",
+ *        "message": {
+ *             "discountId": "{discountId}",
+ *             "percentage": "{new percentage for the discount}"
  *        }
  *     }
  */
-/**
- * Enviá una petición a catalog para validar si un articulo puede incluirse en el cart.
- */
-export async function sendArticleValidation(cartId: string, articleId: string): Promise<IRabbitMessage> {
+
+export async function sendDiscountUpdate(discountId: string, percentage: number): Promise<IRabbitMessage> {
     const message: IRabbitMessage = {
-        type: "article-exist",
-        exchange: "cart",
-        queue: "cart",
+        type: "change",
         message: {
-            referenceId: cartId,
-            articleId: articleId
+            discountId: discountId,
+            percentage: percentage
         }
     };
 
-    return RabbitDirectEmitter.getEmitter("catalog", "catalog").send(message);
+    return RabbitDirectEmitter.getEmitter("order", "order").send(message);
 }

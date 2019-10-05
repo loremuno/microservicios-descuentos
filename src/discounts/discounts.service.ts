@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Observable } from 'rxjs';
 import { status } from './discounts.status';
+import { sendDiscountUpdate } from '../rabbit/discountService';
 
 @Injectable()
 export class DiscountsService {
@@ -40,6 +41,7 @@ export class DiscountsService {
                         doc.status = status.active;
                         doc.save().then(
                             (data: Discount) => {
+                                sendDiscountUpdate(id, discount.percentage).then();
                                 observer.next({
                                     percentage: data.percentage,
                                     redeemed: data.redeemed,

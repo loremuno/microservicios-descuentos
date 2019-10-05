@@ -5,11 +5,17 @@
  */
 import amqp = require("amqplib");
 
-import * as env from "../../server/environment";
 import { IRabbitMessage } from "./common";
 
 export class RabbitDirectEmitter {
-    conf = env.getConfig(process.env);
+    conf = {
+        port: process.env.SERVER_PORT || "3003",
+        logLevel: process.env.LOG_LEVEL || "debug",
+        mongoDb: process.env.MONGODB || "mongodb://localhost/cart",
+        securityServer: process.env.SECURITY_SERVER || "http://localhost:3000",
+        catalogServer: process.env.SECURITY_SERVER || "http://localhost:3002",
+        rabbitUrl: process.env.RABBIT_URL || "amqp://localhost"
+    };
     channel: amqp.Channel;
     static instances = new Map<string, RabbitDirectEmitter>();
 
