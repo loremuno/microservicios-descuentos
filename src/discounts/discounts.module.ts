@@ -13,6 +13,7 @@ import { DiscountsSearchController } from './discounts-search.controller';
     MongooseModule.forFeature([{ name: 'Discount', schema: DiscountSchema }]),
   ],
   controllers: [DiscountsController, DiscountsSearchController],
-  providers: [DiscountsService]
+  providers: [DiscountsService],
+  exports: [DiscountsService]
 })
 export class DiscountsModule { }

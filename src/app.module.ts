@@ -3,14 +3,14 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DiscountsModule } from './discounts/discounts.module';
 import { MongooseModule } from '@nestjs/mongoose';
-import { OrdersModule } from './orders/orders.module';
+import { OrderDiscountModule } from './orders/order-discount.module';
 
 @Module({
   imports: [
     HttpModule,
     MongooseModule.forRoot('mongodb://localhost/nest'),
     DiscountsModule,
-    OrdersModule,
+    OrderDiscountModule,
   ],
   controllers: [AppController],
   providers: [AppService],

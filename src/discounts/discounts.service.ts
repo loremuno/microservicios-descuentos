@@ -5,16 +5,28 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Observable } from 'rxjs';
 import { status } from './discounts.status';
 import { sendDiscountUpdate } from '../rabbit/discountService';
+import { CreateDiscountDTO } from '../dto/createDiscountDTO';
+import { ModifyDiscountDTO } from '../dto/modifyDiscountDTO';
+import * as Amqp from "amqp-ts";
+
+var connection = new Amqp.Connection("amqp://localhost");
+var exchange = connection.declareExchange("discount_update", 'change');
 
 @Injectable()
 export class DiscountsService {
-    constructor(@InjectModel('Discount') private readonly discountModel: Model<Discount>) { }
+    constructor(
+        @InjectModel('Discount') private readonly discountModel: Model<Discount>,
+    ) { }
 
-    create(discount: Discount): Observable<Discount> {
+    create(createDiscountDTO: CreateDiscountDTO): Observable<Discount> {
         return new Observable<Discount>((observer) => {
+            let discount: Discount = new Discount();
             discount.created = new Date();
             discount.modified = new Date();
             discount.status = status.active;
+            discount.redeemed = createDiscountDTO.redeemed;
+            discount.percentage = createDiscountDTO.percentage;
+            discount.endLife = createDiscountDTO.endLife;
             const createdDiscount = new this.discountModel(discount);
             createdDiscount.save().then(
                 (data: Discount) => {
@@ -30,7 +42,7 @@ export class DiscountsService {
         })
     }
 
-    update(id, discount: Discount): Observable<any> {
+    update(id, discount: ModifyDiscountDTO): Observable<any> {
         return new Observable<any>((observer) => {
             this.discountModel.findById(id).then(
                 (doc) => {
@@ -41,7 +53,11 @@ export class DiscountsService {
                         doc.status = status.active;
                         doc.save().then(
                             (data: Discount) => {
-                                sendDiscountUpdate(id, discount.percentage).then();
+                                var msg = new Amqp.Message({
+                                    "discountId": id,
+                                    "percentage": data.percentage,
+                                });
+                                exchange.send(msg);
                                 observer.next({
                                     percentage: data.percentage,
                                     redeemed: data.redeemed,
@@ -58,7 +74,7 @@ export class DiscountsService {
                             )
                     }
                     else {
-                        observer.error(new HttpException("No se puede actualizar un descuento ya reclamado", HttpStatus.INTERNAL_SERVER_ERROR));
+                        observer.error(new HttpException("No se puede actualizar un descuento ya reclamado", HttpStatus.CONFLICT));
                     }
                 }
             )

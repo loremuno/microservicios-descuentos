@@ -223,12 +223,12 @@ Aplicar descuento a orden de compra.
 Solo se le puede aplicar un descuento a una orden.
 Solo se puede usar el código de descuento una única vez.
 URL:
-POST /v1/orders/:order_id/redeem
+POST /v1/redeem/:discount_id/discount
 Header de Autorización
 Authorization=bearer {token}
 Body
 {
-    "discountId": "{discount id value}",
+    "orderId": "{order id value}",
 }
 Respuesta de éxito
 # HTTP/1.1 200 OK
