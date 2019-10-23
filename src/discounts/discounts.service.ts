@@ -91,7 +91,7 @@ export class DiscountsService {
             this.discountModel.findById(id).then(
                 (doc) => {
                     if (doc.status == status.deleted) {
-                        observer.error(new HttpException("Este descuento ya ha sido eliminado", HttpStatus.INTERNAL_SERVER_ERROR));
+                        observer.error(new HttpException("Este descuento ya ha sido eliminado", HttpStatus.CONFLICT));
                     }
                     else {
                         doc.status = status.deleted;

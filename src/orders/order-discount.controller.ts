@@ -19,6 +19,7 @@ export class OrderDiscountController {
     @ApiResponse({ status: 400, description: 'Bad request.' })
     @ApiResponse({ status: 401, description: 'Unauthorized.' })
     @ApiResponse({ status: 403, description: 'Forbidden.' })
+    @ApiResponse({ status: 409, description: '[No existe la orden de compra ingresada, El codigo de descuento ya ha sido usado, La orden de compra ya tiene un descuento aplicado]' })
     @ApiResponse({ status: 500, description: 'Internal server error.' })
     @Post(':discountId/discount')
     redeem(@Param('discountId') discountId: string, @Body() orderDTO: OrderDTO): Observable<any> {

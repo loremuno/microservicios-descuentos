@@ -52,6 +52,7 @@ export class DiscountsController {
     @ApiResponse({ status: 400, description: 'Bad request.' })
     @ApiResponse({ status: 401, description: 'Unauthorized.' })
     @ApiResponse({ status: 403, description: 'Forbidden.' })
+    @ApiResponse({ status: 409, description: 'No se puede actualizar un descuento ya reclamado.' })
     @ApiResponse({ status: 500, description: 'Internal server error.' })
     @Patch(':id')
     update(@Param('discountId') id: string, @Body() discount: ModifyDiscountDTO): Observable<Discount> {
@@ -62,6 +63,7 @@ export class DiscountsController {
     @ApiResponse({ status: 400, description: 'Bad request.' })
     @ApiResponse({ status: 401, description: 'Unauthorized.' })
     @ApiResponse({ status: 403, description: 'Forbidden.' })
+    @ApiResponse({ status: 409, description: 'Este descuento ya ha sido eliminado.' })
     @ApiResponse({ status: 500, description: 'Internal server error.' })
     @Delete(':discountId')
     remove(@Param('discountId') id: string) {

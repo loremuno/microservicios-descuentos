@@ -1,4 +1,4 @@
-import { Module, HttpModule } from '@nestjs/common';
+import { Module, HttpModule, HttpService } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { OrderDiscountController } from './order-discount.controller';
 import { OrderDiscountService } from './order-discount.service';
@@ -14,6 +14,8 @@ import { DiscountsModule } from '../discounts/discounts.module';
     MongooseModule.forFeature([{ name: 'OrderDiscount', schema: OrderDiscountSchema }]),
   ],
   controllers: [OrderDiscountController],
-  providers: [OrderDiscountService]
+  providers: [
+    OrderDiscountService,
+  ]
 })
 export class OrderDiscountModule { }
