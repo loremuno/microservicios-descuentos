@@ -10,7 +10,7 @@ import { ModifyDiscountDTO } from '../dto/modifyDiscountDTO';
 import * as Amqp from "amqp-ts";
 
 var connection = new Amqp.Connection("amqp://localhost");
-var exchange = connection.declareExchange("discount_update", 'change');
+var exchange = connection.declareExchange("discount_update", 'direct');
 
 @Injectable()
 export class DiscountsService {

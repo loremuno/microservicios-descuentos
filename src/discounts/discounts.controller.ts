@@ -54,7 +54,7 @@ export class DiscountsController {
     @ApiResponse({ status: 403, description: 'Forbidden.' })
     @ApiResponse({ status: 409, description: 'No se puede actualizar un descuento ya reclamado.' })
     @ApiResponse({ status: 500, description: 'Internal server error.' })
-    @Patch(':id')
+    @Patch(':discountId')
     update(@Param('discountId') id: string, @Body() discount: ModifyDiscountDTO): Observable<Discount> {
         return this.discountsService.update(id, discount);
     }

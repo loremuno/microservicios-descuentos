@@ -10,10 +10,10 @@ import * as Amqp from "amqp-ts";
 
 var connection = new Amqp.Connection("amqp://localhost");
 var exchange = connection.declareExchange("discount_redeem", 'fanout');
-var queue = connection.declareQueue("QueueName");
+var queue = connection.declareQueue("cola_ejemplo");
 queue.bind(exchange);
 queue.activateConsumer((message) => {
-    console.log("Message received: " + message.getContent());
+    console.log("Message received: " + JSON.stringify(message.getContent()));
 });
 
 @Injectable()
@@ -25,14 +25,12 @@ export class OrderDiscountService {
         @InjectModel('OrderDiscount') private readonly orderDiscountModel: Model<OrderDiscount>
     ) { }
 
-    redeem(discountId, order): Observable<any> {
+    redeem(discountId, order, bearer): Observable<any> {
         return new Observable<any>((observer) => {
-            this.httpService.get(`http://localhost:3002/v1/orders/${order.orderId}`,
-                { headers: { Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNWQ5N2NjZjY5OGE4ZmEzMjM0YjFiYzQ3IiwidG9rZW5faWQiOiI1ZGIwZGZmNGQ1MTI0ZDc4ODA0ZGI5OTciLCJpYXQiOjE1NzE4NzI3NTZ9.Lw59iUtCk-shZQzivh7etnCMHlia0zb8bOSNaECoBW0' } })
-                .subscribe(
+            this.httpService.get(`http://localhost:3004/v1/orders/${order.orderId}`,
+            { headers: { Authorization: bearer } })
+            .subscribe(
                     (data) => {
-                    console.log("TCL: OrderDiscountService -> data", data)
-
                         this.orderDiscountModel.findOne({ 'orderId': order.orderId }).then(
                             (doc) => {
                                 if (doc) {
@@ -117,11 +115,13 @@ export class OrderDiscountService {
                         )
                     },
                     (error) => {
-                        console.log("TCL: OrderDiscountService -> error", error)
-                        if(error.response.status == 401){
+                        if (error.response.status == 401) {
                             observer.error(new HttpException(error.response.statusText, HttpStatus.UNAUTHORIZED));
                         }
-                        else if(error.response.status == 404){
+                        else if (error.response.status == 404) {
+                            observer.error(new HttpException('No existe la orden de compra ingresada', HttpStatus.CONFLICT));
+                        }
+                        else {
                             observer.error(new HttpException('No existe la orden de compra ingresada', HttpStatus.CONFLICT));
                         }
                     }

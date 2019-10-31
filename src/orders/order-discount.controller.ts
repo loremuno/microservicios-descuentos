@@ -22,8 +22,8 @@ export class OrderDiscountController {
     @ApiResponse({ status: 409, description: '[No existe la orden de compra ingresada, El codigo de descuento ya ha sido usado, La orden de compra ya tiene un descuento aplicado]' })
     @ApiResponse({ status: 500, description: 'Internal server error.' })
     @Post(':discountId/discount')
-    redeem(@Param('discountId') discountId: string, @Body() orderDTO: OrderDTO): Observable<any> {
-        return this.orderDiscountService.redeem(discountId, orderDTO);
+    redeem(@Param('discountId') discountId: string, @Body() orderDTO: OrderDTO, @Headers() header): Observable<any> {
+        return this.orderDiscountService.redeem(discountId, orderDTO, header.authorization);
     }
 
 }

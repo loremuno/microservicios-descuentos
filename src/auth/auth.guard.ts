@@ -10,7 +10,7 @@ export class AuthGuard implements CanActivate {
     ): boolean | Promise<boolean> | Observable<boolean> {
         return new Observable<boolean>((observer) => {
             const request = context.switchToHttp().getRequest();
-            this.httpService.get('http://localhost:3100/v1/users/current',
+            this.httpService.get('http://localhost:3000/v1/users/current',
                 { headers: { Authorization: request.headers.authorization } })
                 .subscribe(
                     (data) => {
